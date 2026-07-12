@@ -124,6 +124,7 @@ model Driver {
   licenseExpiry DateTime     @map("license_expiry")
   phone         String
   status        DriverStatus @default(ACTIVE)
+  safetyScore   Int          @default(100) @map("safety_score")
   createdAt     DateTime     @default(now()) @map("created_at")
   updatedAt     DateTime     @updatedAt @map("updated_at")
 
@@ -150,6 +151,7 @@ model Trip {
   vehicleId      String     @map("vehicle_id")
   status         TripStatus @default(SCHEDULED)
   distanceKm     Decimal?   @map("distance_km") @db.Decimal(10, 2)
+  cargoWeight    Int?       @map("cargo_weight")
   createdAt      DateTime   @default(now()) @map("created_at")
   updatedAt      DateTime   @updatedAt @map("updated_at")
 
