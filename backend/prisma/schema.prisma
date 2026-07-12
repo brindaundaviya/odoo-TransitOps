@@ -1,5 +1,4 @@
-// TransitOps – Prisma schema
-// Models will be added in subsequent development phases.
+// TransitOps – Core database schema
 
 generator client {
   provider = "prisma-client-js"
@@ -8,4 +7,236 @@ generator client {
 datasource db {
   provider = "postgresql"
   url      = env("DATABASE_URL")
+}
+
+enum Role {
+  ADMIN
+  FLEET_MANAGER
+  DRIVER
+  SAFETY_OFFICER
+  FINANCIAL_ANALYST
+}
+
+enum UserStatus {
+  ACTIVE
+  INACTIVE
+}
+
+enum VehicleStatus {
+  ACTIVE
+  MAINTENANCE
+  RETIRED
+}
+
+enum DriverStatus {
+  ACTIVE
+  ON_LEAVE
+  SUSPENDED
+}
+
+enum TripStatus {
+  SCHEDULED
+  IN_PROGRESS
+  COMPLETED
+  CANCELLED
+}
+
+enum MaintenanceType {
+  SCHEDULED
+  REPAIR
+  INSPECTION
+}
+
+enum MaintenanceStatus {
+  PENDING
+  IN_PROGRESS
+  COMPLETED
+  OVERDUE
+}
+
+enum ExpenseCategory {
+  FUEL
+  MAINTENANCE
+  TOLL
+  INSURANCE
+  FINE
+  MISC
+}
+
+enum ExpenseStatus {
+  PENDING
+  APPROVED
+  REJECTED
+}
+
+model User {
+  id           String     @id @default(uuid())
+  email        String     @unique
+  passwordHash String     @map("password_hash")
+  firstName    String     @map("first_name")
+  lastName     String     @map("last_name")
+  role         Role
+  status       UserStatus @default(ACTIVE)
+  lastLoginAt  DateTime?  @map("last_login_at")
+  createdAt    DateTime   @default(now()) @map("created_at")
+  updatedAt    DateTime   @updatedAt @map("updated_at")
+
+  driver    Driver?
+  expenses  Expense[]
+
+  @@index([role])
+  @@index([status])
+  @@map("users")
+}
+
+model Vehicle {
+  id                 String        @id @default(uuid())
+  registrationNumber String        @unique @map("registration_number")
+  make               String
+  model              String
+  year               Int
+  vin                String?       @unique
+  fuelType           String        @map("fuel_type")
+  capacity           Int?
+  odometer           Int           @default(0)
+  status             VehicleStatus @default(ACTIVE)
+  createdAt          DateTime      @default(now()) @map("created_at")
+  updatedAt          DateTime      @updatedAt @map("updated_at")
+
+  maintenanceLogs MaintenanceLog[]
+  fuelLogs        FuelLog[]
+  expenses        Expense[]
+  trips           Trip[]
+
+  @@index([status])
+  @@index([registrationNumber])
+  @@map("vehicles")
+}
+
+model Driver {
+  id            String       @id @default(uuid())
+  userId        String?      @unique @map("user_id")
+  employeeId    String       @unique @map("employee_id")
+  firstName     String       @map("first_name")
+  lastName      String       @map("last_name")
+  licenseNumber String       @unique @map("license_number")
+  licenseClass  String       @map("license_class")
+  licenseExpiry DateTime     @map("license_expiry")
+  phone         String
+  status        DriverStatus @default(ACTIVE)
+  createdAt     DateTime     @default(now()) @map("created_at")
+  updatedAt     DateTime     @updatedAt @map("updated_at")
+
+  user     User?     @relation(fields: [userId], references: [id], onDelete: SetNull)
+  trips    Trip[]
+  fuelLogs FuelLog[]
+
+  @@index([status])
+  @@index([licenseExpiry])
+  @@index([employeeId])
+  @@map("drivers")
+}
+
+model Trip {
+  id             String     @id @default(uuid())
+  tripCode       String     @unique @map("trip_code")
+  origin         String
+  destination    String
+  scheduledStart DateTime   @map("scheduled_start")
+  scheduledEnd   DateTime   @map("scheduled_end")
+  actualStart    DateTime?  @map("actual_start")
+  actualEnd      DateTime?  @map("actual_end")
+  driverId       String     @map("driver_id")
+  vehicleId      String     @map("vehicle_id")
+  status         TripStatus @default(SCHEDULED)
+  distanceKm     Decimal?   @map("distance_km") @db.Decimal(10, 2)
+  createdAt      DateTime   @default(now()) @map("created_at")
+  updatedAt      DateTime   @updatedAt @map("updated_at")
+
+  driver   Driver    @relation(fields: [driverId], references: [id])
+  vehicle  Vehicle   @relation(fields: [vehicleId], references: [id])
+  fuelLogs FuelLog[]
+  expenses Expense[]
+
+  @@index([driverId])
+  @@index([vehicleId])
+  @@index([status])
+  @@index([scheduledStart])
+  @@index([tripCode])
+  @@map("trips")
+}
+
+model MaintenanceLog {
+  id                String            @id @default(uuid())
+  vehicleId         String            @map("vehicle_id")
+  type              MaintenanceType
+  description       String
+  scheduledDate     DateTime          @map("scheduled_date")
+  completedDate     DateTime?         @map("completed_date")
+  cost              Decimal?          @db.Decimal(12, 2)
+  serviceProvider   String?           @map("service_provider")
+  status            MaintenanceStatus @default(PENDING)
+  odometerAtService Int?              @map("odometer_at_service")
+  createdAt         DateTime          @default(now()) @map("created_at")
+  updatedAt         DateTime          @updatedAt @map("updated_at")
+
+  vehicle Vehicle @relation(fields: [vehicleId], references: [id])
+
+  @@index([vehicleId])
+  @@index([status])
+  @@index([scheduledDate])
+  @@map("maintenance_logs")
+}
+
+model FuelLog {
+  id        String   @id @default(uuid())
+  vehicleId String   @map("vehicle_id")
+  tripId    String?  @map("trip_id")
+  driverId  String?  @map("driver_id")
+  loggedAt  DateTime @map("logged_at")
+  fuelType  String   @map("fuel_type")
+  quantity  Decimal  @db.Decimal(10, 2)
+  cost      Decimal  @db.Decimal(12, 2)
+  odometer  Int
+  station   String?
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  vehicle Vehicle @relation(fields: [vehicleId], references: [id])
+  trip    Trip?   @relation(fields: [tripId], references: [id], onDelete: SetNull)
+  driver  Driver? @relation(fields: [driverId], references: [id], onDelete: SetNull)
+
+  @@index([vehicleId])
+  @@index([tripId])
+  @@index([driverId])
+  @@index([loggedAt])
+  @@map("fuel_logs")
+}
+
+model Expense {
+  id          String          @id @default(uuid())
+  category    ExpenseCategory
+  amount      Decimal         @db.Decimal(12, 2)
+  currency    String          @default("USD")
+  expenseDate DateTime        @map("expense_date")
+  vehicleId   String?         @map("vehicle_id")
+  tripId      String?         @map("trip_id")
+  description String
+  receiptRef  String?         @map("receipt_ref")
+  status      ExpenseStatus   @default(PENDING)
+  submittedBy String?         @map("submitted_by")
+  createdAt   DateTime        @default(now()) @map("created_at")
+  updatedAt   DateTime        @updatedAt @map("updated_at")
+
+  vehicle   Vehicle? @relation(fields: [vehicleId], references: [id], onDelete: SetNull)
+  trip      Trip?    @relation(fields: [tripId], references: [id], onDelete: SetNull)
+  submitter User?    @relation(fields: [submittedBy], references: [id], onDelete: SetNull)
+
+  @@index([category])
+  @@index([vehicleId])
+  @@index([tripId])
+  @@index([status])
+  @@index([expenseDate])
+  @@index([submittedBy])
+  @@map("expenses")
 }

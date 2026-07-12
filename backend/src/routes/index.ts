@@ -1,5 +1,6 @@
 import { Router, Request, Response } from 'express';
 import { asyncHandler } from '../utils/asyncHandler';
+import authRoutes from '../modules/auth/auth.routes';
 
 const router = Router();
 
@@ -12,5 +13,7 @@ router.get(
     });
   }),
 );
+
+router.use('/auth', authRoutes);
 
 export default router;

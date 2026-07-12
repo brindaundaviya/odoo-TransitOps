@@ -1,3 +1,5 @@
+import { Role } from '@prisma/client';
+
 export {};
 
 declare global {
@@ -6,7 +8,7 @@ declare global {
       user?: {
         id: string;
         email: string;
-        role: string;
+        role: Role;
       };
     }
   }
