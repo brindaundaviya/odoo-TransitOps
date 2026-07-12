@@ -1,6 +1,15 @@
-import { FuelLog } from '@prisma/client';
+export interface CreateFuelLogInput {
+  vehicleId: string;
+  tripId?: string | null;
+  driverId?: string | null;
+  loggedAt: Date;
+  fuelType: string;
+  quantity: number;
+  cost: number;
+  odometer: number;
+  station?: string | null;
+}
 
-export type CreateFuelLogInput = Omit<FuelLog, 'id' | 'createdAt' | 'updatedAt'>;
 export type UpdateFuelLogInput = Partial<CreateFuelLogInput>;
 
 export interface FuelLogQueryFilters {

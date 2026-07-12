@@ -14,19 +14,19 @@ export const driverController = {
   update: asyncHandler(async (req: Request, res: Response) => {
     const { id } = req.params;
     const body = req.body as UpdateDriverSchema;
-    const result = await driverService.update(id, body);
+    const result = await driverService.update(String(id), body);
     return ApiResponse.success(res, 'Driver updated successfully', result);
   }),
 
   delete: asyncHandler(async (req: Request, res: Response) => {
     const { id } = req.params;
-    await driverService.delete(id);
+    await driverService.delete(String(id));
     return ApiResponse.success(res, 'Driver deleted successfully');
   }),
 
   getById: asyncHandler(async (req: Request, res: Response) => {
     const { id } = req.params;
-    const result = await driverService.getById(id);
+    const result = await driverService.getById(String(id));
     return ApiResponse.success(res, 'Driver retrieved successfully', result);
   }),
 

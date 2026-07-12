@@ -1,4 +1,4 @@
-import { TripStatus, ExpenseCategory, VehicleStatus } from '@prisma/client';
+import { TripStatus, ExpenseCategory } from '@prisma/client';
 import { prisma } from '../../config/database';
 
 export const analyticsService = {

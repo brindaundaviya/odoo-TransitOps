@@ -14,19 +14,19 @@ export const fuelController = {
   update: asyncHandler(async (req: Request, res: Response) => {
     const { id } = req.params;
     const body = req.body as UpdateFuelLogSchema;
-    const result = await fuelService.update(id, body);
+    const result = await fuelService.update(String(id), body);
     return ApiResponse.success(res, 'Fuel log updated successfully', result);
   }),
 
   delete: asyncHandler(async (req: Request, res: Response) => {
     const { id } = req.params;
-    await fuelService.delete(id);
+    await fuelService.delete(String(id));
     return ApiResponse.success(res, 'Fuel log deleted successfully');
   }),
 
   getById: asyncHandler(async (req: Request, res: Response) => {
     const { id } = req.params;
-    const result = await fuelService.getById(id);
+    const result = await fuelService.getById(String(id));
     return ApiResponse.success(res, 'Fuel log retrieved successfully', result);
   }),
 

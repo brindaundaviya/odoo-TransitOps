@@ -14,19 +14,19 @@ export const vehicleController = {
   update: asyncHandler(async (req: Request, res: Response) => {
     const { id } = req.params;
     const body = req.body as UpdateVehicleSchema;
-    const result = await vehicleService.update(id, body);
+    const result = await vehicleService.update(String(id), body);
     return ApiResponse.success(res, 'Vehicle updated successfully', result);
   }),
 
   delete: asyncHandler(async (req: Request, res: Response) => {
     const { id } = req.params;
-    await vehicleService.delete(id);
+    await vehicleService.delete(String(id));
     return ApiResponse.success(res, 'Vehicle deleted successfully');
   }),
 
   getById: asyncHandler(async (req: Request, res: Response) => {
     const { id } = req.params;
-    const result = await vehicleService.getById(id);
+    const result = await vehicleService.getById(String(id));
     return ApiResponse.success(res, 'Vehicle retrieved successfully', result);
   }),
 

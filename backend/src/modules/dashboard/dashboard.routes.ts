@@ -7,5 +7,9 @@ const router = Router();
 router.use(authenticate);
 
 router.get('/kpis', dashboardController.getKPIs);
+router.get('/fleet-utilization', dashboardController.getFleetUtilization);
+router.get('/fuel-consumption', dashboardController.getFuelConsumption);
+router.get('/monthly-expenses', dashboardController.getMonthlyExpenses);
+router.get('/trip-distribution', dashboardController.getTripDistribution);
 
 export default router;

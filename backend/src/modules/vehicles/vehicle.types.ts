@@ -1,10 +1,19 @@
-import { Vehicle } from '@prisma/client';
+export interface CreateVehicleInput {
+  registrationNumber: string;
+  make: string;
+  model: string;
+  year: number;
+  vin?: string | null;
+  fuelType: string;
+  capacity?: number | null;
+  odometer?: number;
+  status?: 'ACTIVE' | 'MAINTENANCE' | 'RETIRED';
+}
 
-export type CreateVehicleInput = Omit<Vehicle, 'id' | 'createdAt' | 'updatedAt'>;
 export type UpdateVehicleInput = Partial<CreateVehicleInput>;
 
 export interface VehicleQueryFilters {
-  status?: Vehicle['status'];
+  status?: string;
   search?: string;
   page?: number;
   limit?: number;

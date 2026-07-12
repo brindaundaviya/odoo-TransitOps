@@ -85,7 +85,7 @@ export const maintenanceService = {
     const vehicle = await vehicleRepository.findById(log.vehicleId);
     if (vehicle && vehicle.status === VehicleStatus.MAINTENANCE) {
       const otherOpen = await hasOtherOpenMaintenance(log.vehicleId);
-      if (!otherOpen && vehicle.status !== VehicleStatus.RETIRED) {
+      if (!otherOpen) {
         await vehicleRepository.update(log.vehicleId, { status: VehicleStatus.ACTIVE });
       }
     }

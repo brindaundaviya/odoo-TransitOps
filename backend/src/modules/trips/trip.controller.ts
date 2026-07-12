@@ -14,19 +14,19 @@ export const tripController = {
   update: asyncHandler(async (req: Request, res: Response) => {
     const { id } = req.params;
     const body = req.body as UpdateTripSchema;
-    const result = await tripService.update(id, body);
+    const result = await tripService.update(String(id), body);
     return ApiResponse.success(res, 'Trip updated successfully', result);
   }),
 
   delete: asyncHandler(async (req: Request, res: Response) => {
     const { id } = req.params;
-    await tripService.delete(id);
+    await tripService.delete(String(id));
     return ApiResponse.success(res, 'Trip deleted successfully');
   }),
 
   getById: asyncHandler(async (req: Request, res: Response) => {
     const { id } = req.params;
-    const result = await tripService.getById(id);
+    const result = await tripService.getById(String(id));
     return ApiResponse.success(res, 'Trip retrieved successfully', result);
   }),
 

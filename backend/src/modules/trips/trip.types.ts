@@ -1,10 +1,22 @@
-import { Trip } from '@prisma/client';
+export interface CreateTripInput {
+  tripCode: string;
+  origin: string;
+  destination: string;
+  scheduledStart: Date;
+  scheduledEnd: Date;
+  actualStart?: Date | null;
+  actualEnd?: Date | null;
+  driverId: string;
+  vehicleId: string;
+  status?: 'SCHEDULED' | 'IN_PROGRESS' | 'COMPLETED' | 'CANCELLED';
+  distanceKm?: number | null;
+  cargoWeight?: number | null;
+}
 
-export type CreateTripInput = Omit<Trip, 'id' | 'createdAt' | 'updatedAt'>;
 export type UpdateTripInput = Partial<CreateTripInput>;
 
 export interface TripQueryFilters {
-  status?: Trip['status'];
+  status?: string;
   search?: string;
   driverId?: string;
   vehicleId?: string;

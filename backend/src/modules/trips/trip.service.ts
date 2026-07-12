@@ -1,4 +1,4 @@
-import { TripStatus } from '@prisma/client';
+import { TripStatus, VehicleStatus } from '@prisma/client';
 import { ApiError } from '../../utils/ApiError';
 import { tripRepository } from './trip.repository';
 import { driverRepository } from '../drivers/driver.repository';
@@ -31,14 +31,14 @@ export const tripService = {
 
     // Business Rules validation:
     // 1. Retired vehicles cannot be dispatched
-    if (vehicle.status === 'RETIRED') {
+    if (vehicle.status === VehicleStatus.RETIRED) {
       throw new ApiError(400, 'Retired vehicles cannot be dispatched', [
         { field: 'vehicleId', message: 'Vehicle is retired' },
       ]);
     }
 
     // 2. Vehicles in maintenance cannot be dispatched
-    if (vehicle.status === 'MAINTENANCE') {
+    if (vehicle.status === VehicleStatus.MAINTENANCE) {
       throw new ApiError(400, 'Vehicles in maintenance cannot be dispatched', [
         { field: 'vehicleId', message: 'Vehicle is in maintenance' },
       ]);
@@ -100,7 +100,7 @@ export const tripService = {
       driverId: input.driverId,
       vehicleId: input.vehicleId,
       cargoWeight: input.cargoWeight,
-      status: input.status,
+      status: input.status || 'SCHEDULED',
     });
 
     const data: any = { ...input };

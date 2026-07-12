@@ -14,19 +14,19 @@ export const maintenanceController = {
   update: asyncHandler(async (req: Request, res: Response) => {
     const { id } = req.params;
     const body = req.body as UpdateMaintenanceSchema;
-    const result = await maintenanceService.update(id, body);
+    const result = await maintenanceService.update(String(id), body);
     return ApiResponse.success(res, 'Maintenance log updated successfully', result);
   }),
 
   delete: asyncHandler(async (req: Request, res: Response) => {
     const { id } = req.params;
-    await maintenanceService.delete(id);
+    await maintenanceService.delete(String(id));
     return ApiResponse.success(res, 'Maintenance log deleted successfully');
   }),
 
   getById: asyncHandler(async (req: Request, res: Response) => {
     const { id } = req.params;
-    const result = await maintenanceService.getById(id);
+    const result = await maintenanceService.getById(String(id));
     return ApiResponse.success(res, 'Maintenance log retrieved successfully', result);
   }),
 

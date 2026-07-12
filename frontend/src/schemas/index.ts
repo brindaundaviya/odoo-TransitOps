@@ -1,11 +1,6 @@
-import { z } from 'zod';
-
-/**
- * Zod is configured and ready for form validation.
- * Domain schemas will be added alongside feature modules.
- */
-export const foundationSchema = z.object({
-  placeholder: z.string().optional(),
-});
-
-export type FoundationSchema = z.infer<typeof foundationSchema>;
+export * from './vehicle.schema';
+export * from './driver.schema';
+export * from './trip.schema';
+export * from './maintenance.schema';
+export * from './fuel.schema';
+export * from './expense.schema';
