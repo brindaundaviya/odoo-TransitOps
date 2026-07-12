@@ -1,6 +1,7 @@
 import { NavLink } from 'react-router-dom';
-import { NAVIGATION_ITEMS } from '@/constants/navigation';
+import { NAVIGATION_ITEMS, ROLE_NAVIGATION_MAP } from '@/constants/navigation';
 import { cn } from '@/utils/cn';
+import { useAuth } from '@/hooks/useAuth';
 
 interface SidebarProps {
   isOpen: boolean;
@@ -77,8 +78,15 @@ const NavIcon = ({ id }: { id: string }) => {
 };
 
 export const Sidebar = ({ isOpen, onClose }: SidebarProps) => {
-  const mainItems = NAVIGATION_ITEMS.filter((item) => item.section === 'main');
-  const insightItems = NAVIGATION_ITEMS.filter((item) => item.section === 'insights');
+  const { user } = useAuth();
+  const allowedItems = user ? ROLE_NAVIGATION_MAP[user.role] : [];
+
+  const mainItems = NAVIGATION_ITEMS.filter(
+    (item) => item.section === 'main' && allowedItems.includes(item.id)
+  );
+  const insightItems = NAVIGATION_ITEMS.filter(
+    (item) => item.section === 'insights' && allowedItems.includes(item.id)
+  );
 
   const renderNavSection = (title: string, items: typeof NAVIGATION_ITEMS) => (
     <div>

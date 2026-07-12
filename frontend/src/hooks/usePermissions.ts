@@ -1,5 +1,7 @@
 import { ROLES, type Role } from '@/constants/roles';
 import { PERMISSIONS, type Permission } from '@/constants/permissions';
+import { useAuth } from './useAuth';
+
 
 /**
  * Placeholder permission map — will be replaced with role-based logic
@@ -51,12 +53,12 @@ const ROLE_PERMISSIONS: Record<Role, Permission[]> = {
     PERMISSIONS.VIEW_ANALYTICS,
   ],
 };
-
 export const usePermissions = () => {
+  const { user } = useAuth();
+
   const hasPermission = (permission: Permission): boolean => {
-    void permission;
-    // Placeholder — returns true until auth module wires role from context.
-    return true;
+    if (!user) return false;
+    return ROLE_PERMISSIONS[user.role].includes(permission);
   };
 
   const getPermissionsForRole = (role: Role): Permission[] => {

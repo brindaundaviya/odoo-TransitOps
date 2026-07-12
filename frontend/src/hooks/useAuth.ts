@@ -1,7 +1,5 @@
-import { useAuthContext } from '@/contexts/AuthContext';
-import type { AuthState } from '@/types/auth.types';
+import { useAuthContext, type AuthContextValue } from '@/contexts/AuthContext';
 
-export const useAuth = (): AuthState => {
-  const { user, isAuthenticated } = useAuthContext();
-  return { user, isAuthenticated };
+export const useAuth = (): AuthContextValue => {
+  return useAuthContext();
 };
