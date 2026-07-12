@@ -1,0 +1,2 @@
+# Feature modules will be added in subsequent development phases.
+# Each module follows: routes → controller → service → repository → validator → types
